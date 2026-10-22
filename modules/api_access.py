@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
 import requests
 import time
 import json
+
+##### Classes #####
 
 class APIwrapper:
     # class variables shared among all instances
@@ -82,25 +85,39 @@ class AMRSP_access(APIwrapper):
     def __init__(self, metric, theme="infectious_disease", sub_theme="antimicrobial_resistance", topic="S-pneumoniae", geography_type="Nation", geography="England"):
         super().__init__(theme, sub_theme, topic, geography_type, geography, metric)
 
-def get_amrsp_metrics(mets):
+class AB_access(APIwrapper):
+    """Subclass for accessing metrics based on the antibiotic use."""
+    def __init__(self, metric, theme="medicines", sub_theme="antimicrobials", topic="antibiotics", geography_type="Nation", geography="England"):
+        super().__init__(theme, sub_theme, topic, geography_type, geography, metric)
+
+##### Functions #####
+
+def get_metrics(mets, API):
     """Takes a list of metrics and grabs all pages for those metrics. Dumps them to a json file."""
-    for i in mets:
-        api = AMRSP_access(i)
-        result = api.get_all_pages()
-        with open(f"data/{i}.json", "wt") as OUTF:
-            json.dump(result, OUTF)
+    match API:
+        case "AMRSP":
+            for i in mets:
+                api = AMRSP_access(i)
+                result = api.get_all_pages()
+                with open(f"data/{i}.json", "wt") as OUTF:
+                    json.dump(result, OUTF)
+        case "AB":
+            for i in mets:
+                api = AB_access(i)
+                result = api.get_all_pages()
+                with open(f"data/{i}.json", "wt") as OUTF:
+                    json.dump(result, OUTF)
+        case _:
+            print("API not recognised.")
 
-amr_s_p_metrics =["s-pneumoniae_testing_bacteraemiaPercentResistantRollingMonth", "s-pneumoniae_testing_bacteraemiaNumberTestedRollingMonth",     "s-pneumoniae_testing_bacteraemiaPercentTestedRollingMonth"]
+##### Variables #####
 
-get_amrsp_metrics(amr_s_p_metrics)
+AMRSP_metrics =["s-pneumoniae_testing_bacteraemiaPercentResistantRollingMonth", "s-pneumoniae_testing_bacteraemiaNumberTestedRollingMonth",     "s-pneumoniae_testing_bacteraemiaPercentTestedRollingMonth"]
 
-antibiotic_use_params = {
-    "theme":"medicines",
-    "sub_theme":"antimicrobials",
-    "topic":"antibiotics",
-    "geography_type":"Nation",
-    "geography":"England"
-}
+AB_metrics =["antibiotics_consumption_totalDID", "antibiotics_consumption_awareReserve", "antibiotics_consumption_awareWatch", "antibiotics_consumption_awareAccess", "antibiotics_consumption_secondaryDID", "antibiotics_consumption_primaryAware",     "antibiotics_consumption_primaryCareRateByMonth", "antibiotics_consumption_totalAware", "antibiotics_consumption_primaryDID"]
 
-amr_s_p_metrics =["antibiotics_consumption_totalDID", "antibiotics_consumption_awareReserve", "antibiotics_consumption_awareWatch", "antibiotics_consumption_awareAccess", "antibiotics_consumption_secondaryDID", "antibiotics_consumption_primaryAware",     "antibiotics_consumption_primaryCareRateByMonth", "    antibiotics_consumption_totalAware", "antibiotics_consumption_primaryDID"]
+
+##### Scripts #####
+get_metrics(AMRSP_metrics, "AMRSP")
+get_metrics(AB_metrics, "AB")
 
