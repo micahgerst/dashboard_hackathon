@@ -92,6 +92,12 @@ class AB_access(APIwrapper):
 
 ##### Functions #####
 
+def cleanName(fileName):
+    rawName = fileName
+    partsList = rawName.rsplit("_", 1)
+    name = partsList[-1]
+    return name
+
 def get_metrics(mets, API):
     """Takes a list of metrics and grabs all pages for those metrics. Dumps them to a json file."""
     match API:
@@ -99,13 +105,15 @@ def get_metrics(mets, API):
             for i in mets:
                 api = AMRSP_access(i)
                 result = api.get_all_pages()
-                with open(f"data/{i}.json", "wt") as OUTF:
+                cleaned = cleanName(i)
+                with open(f"data/{cleaned}.json", "wt") as OUTF:
                     json.dump(result, OUTF)
         case "AB":
             for i in mets:
-                api = AB_access(i)
+                api = AMRSP_access(i)
                 result = api.get_all_pages()
-                with open(f"data/{i}.json", "wt") as OUTF:
+                cleaned = cleanName(i)
+                with open(f"data/{cleaned}.json", "wt") as OUTF:
                     json.dump(result, OUTF)
         case _:
             print("API not recognised.")
