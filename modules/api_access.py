@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-
 import requests
 import time
+import json
 
 class APIwrapper:
     # class variables shared among all instances
@@ -78,16 +77,19 @@ class APIwrapper:
             data.extend(next_page)
         return data
 
-
-amr_s_pneumoniae_params = {
-    "theme":"infectious_disease",
-    "sub_theme":"antimicrobial_resistance",
-    "topic":"S-pneumoniae",
-    "geography_type":"Nation",
-    "geography":"England"
-}
+class AMRSP_access(APIwrapper):
+    """Subclass for accessing metrics based on the antimicrobial resistant Streptococcus pneumoniae."""
+    def __init__(self, metric, theme="infectious_disease", sub_theme="antimicrobial_resistance", topic="S-pneumoniae", geography_type="Nation", geography="England"):
+        super().__init__(theme, sub_theme, topic, geography_type, geography, metric)
 
 amr_s_p_metrics =["s-pneumoniae_testing_bacteraemiaPercentResistantRollingMonth", "s-pneumoniae_testing_bacteraemiaNumberTestedRollingMonth",     "s-pneumoniae_testing_bacteraemiaPercentTestedRollingMonth"]
+
+# iterate over each of the metrics available in amr_s_p_metrics. open
+for i in amr_s_p_metrics:
+    api = AMRSP_access(i)
+    result = api.get_all_pages()
+    with open(f"{i}.json", "wt") as OUTF:
+        json.dump(result, OUTF)
 
 antibiotic_use_params = {
     "theme":"medicines",
@@ -98,3 +100,4 @@ antibiotic_use_params = {
 }
 
 amr_s_p_metrics =["antibiotics_consumption_totalDID", "antibiotics_consumption_awareReserve", "antibiotics_consumption_awareWatch", "antibiotics_consumption_awareAccess", "antibiotics_consumption_secondaryDID", "antibiotics_consumption_primaryAware",     "antibiotics_consumption_primaryCareRateByMonth", "    antibiotics_consumption_totalAware", "antibiotics_consumption_primaryDID"]
+
