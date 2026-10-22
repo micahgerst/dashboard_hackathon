@@ -97,4 +97,4 @@ antibiotic_use_params = {
     "geography":"England"
 }
 
-amr_s_p_metrics =[]
+amr_s_p_metrics =["antibiotics_consumption_totalDID", "antibiotics_consumption_awareReserve", "antibiotics_consumption_awareWatch", "antibiotics_consumption_awareAccess", "antibiotics_consumption_secondaryDID", "antibiotics_consumption_primaryAware",     "antibiotics_consumption_primaryCareRateByMonth", "    antibiotics_consumption_totalAware", "antibiotics_consumption_primaryDID"]
