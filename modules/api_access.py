@@ -82,14 +82,17 @@ class AMRSP_access(APIwrapper):
     def __init__(self, metric, theme="infectious_disease", sub_theme="antimicrobial_resistance", topic="S-pneumoniae", geography_type="Nation", geography="England"):
         super().__init__(theme, sub_theme, topic, geography_type, geography, metric)
 
+def get_amrsp_metrics(mets):
+    """Takes a list of metrics and grabs all pages for those metrics. Dumps them to a json file."""
+    for i in mets:
+        api = AMRSP_access(i)
+        result = api.get_all_pages()
+        with open(f"data/{i}.json", "wt") as OUTF:
+            json.dump(result, OUTF)
+
 amr_s_p_metrics =["s-pneumoniae_testing_bacteraemiaPercentResistantRollingMonth", "s-pneumoniae_testing_bacteraemiaNumberTestedRollingMonth",     "s-pneumoniae_testing_bacteraemiaPercentTestedRollingMonth"]
 
-# iterate over each of the metrics available in amr_s_p_metrics. open
-for i in amr_s_p_metrics:
-    api = AMRSP_access(i)
-    result = api.get_all_pages()
-    with open(f"{i}.json", "wt") as OUTF:
-        json.dump(result, OUTF)
+get_amrsp_metrics(amr_s_p_metrics)
 
 antibiotic_use_params = {
     "theme":"medicines",
