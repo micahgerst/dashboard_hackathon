@@ -105,12 +105,13 @@ def get_metrics(mets, API):
             for i in mets:
                 api = AMRSP_access(i)
                 result = api.get_all_pages()
-                cleaned = cleanName(i)
+                chopped = cleanName(i)
+                cleaned = chopped.removeprefix("bacteraemia")
                 with open(f"data/{cleaned}.json", "wt") as OUTF:
                     json.dump(result, OUTF)
         case "AB":
             for i in mets:
-                api = AMRSP_access(i)
+                api = AB_access(i)
                 result = api.get_all_pages()
                 cleaned = cleanName(i)
                 with open(f"data/{cleaned}.json", "wt") as OUTF:
